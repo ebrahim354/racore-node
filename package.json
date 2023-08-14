@@ -33,6 +33,9 @@
     "pg": "^8.7.1",
     "redis": "^4.4.0"
   },
+  "engines": {
+    "node": ">=16"
+  },
   "devDependencies": {
     "supertest": "^6.1.6"
   }
