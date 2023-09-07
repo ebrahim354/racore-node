@@ -23,6 +23,10 @@ App.use(morgan("tiny"));
 App.use(helmet());
 App.use(cors());
 
+App.get("/", (_, res) => {
+  return res.send("hello");
+});
+
 App.get('*', async (req,res) => {
   let filename = req.path.slice(1)
 
@@ -45,9 +49,6 @@ App.get('*', async (req,res) => {
   }
 });
 
-App.get("/", (_, res) => {
-  return res.send("hello");
-});
 App.use(getToken);
 App.use("/api/verifyToken", verification);
 App.use("/api/auth/", auth);
