@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { BUCKET } = require('../utils/config');
 const { validateToken } = require("../middleware/validation");
 const { validatePost, updatesValidation } = require("../middleware/validation");
 
@@ -11,7 +12,22 @@ const {
   deleteProduct,
 } = require("../db/productService");
 const path = require("path");
+const aws = require('aws-sdk');
+const s3 = new aws.S3();
+
+const multerS3 = ({
+    s3: s3,
+    bucket: BUCKET,
+    key: function (req, file, cb) {
+      console.log('filename', file.originalname);
+      const imgPath = Date.now() + req.file.originalname;
+      req.body.img = imgPath;
+      cb(null, imgPath);
+    }
+  })
+
 const upload = multer({
+  storage: BUCKET ? multerS3 : null,
   dest: path.join(__dirname, "../../public/post"),
 });
 

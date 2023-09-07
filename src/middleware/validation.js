@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const verifyToken = require('../utils/verifyToken');
+const { BUCKET } = require('../utils/config');
 
 const idValidation = (req, res, next) => {
 	if (!req.params.id) {
@@ -38,18 +39,15 @@ const validatePost = (req, res, next) => {
 		return next(error);
 	}
 	// vallidate and save the img if there is any
-	if (req.file) {
+	if (req.file && !BUCKET) {
 		const tmpPath = req.file.path;
 		console.log(tmpPath);
 		const imgPath = path.join(
 			'/public/',
 			Date.now() + req.file.originalname
 		);
-		console.log(imgPath);
 		const newPath = path.join(__dirname, '../..', imgPath);
-		console.log('new path', newPath);
 		const extName = path.extname(req.file.originalname).toLowerCase();
-		console.log(extName);
 		// check for accepted extentions only
 		if (extName !== '.png' && extName !== '.jpeg' && extName !== '.jpg') {
 			fs.unlinkSync(tmpPath);
@@ -62,11 +60,7 @@ const validatePost = (req, res, next) => {
 		// the img ext is accepted rename it
 		fs.renameSync(tmpPath, newPath);
 		req.body.img = imgPath;
-		console.log('img path is: ', imgPath);
-		console.log('new path is: ', newPath);
-		console.log('tmp path is: ', tmpPath);
 	}
-
 	next();
 };
 // catches if the token is expired or false for the protected routs
@@ -76,6 +70,7 @@ const validateToken = (req, res, next) => {
 		const payload = verifyToken(req.token, true);
 		// console.log(`payload: ${payload.sub}`)
 		req.body.userId = payload.sub;
+		console.log("hello from upload", req);
 	} catch (err) {
 		// console.log(err)
 		next(err);
