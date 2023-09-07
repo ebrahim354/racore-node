@@ -24,6 +24,7 @@ App.use(helmet());
 App.use(cors());
 
 App.get("/", (_, res) => {
+  console.log("HI\n");
   return res.send("hello");
 });
 

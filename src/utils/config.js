@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const DB = process.env.DB_URL;
 const REDIS = process.env.REDIS_URL;
 const BUCKET=process.env.CYCLIC_BUCKET_NAME;

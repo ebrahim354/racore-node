@@ -28,7 +28,7 @@ const multerS3 = ({
 
 const upload = multer({
   storage: BUCKET ? multerS3 : null,
-  dest: path.join(__dirname, "../../public/post"),
+  dest: BUCKET ? null : path.join(__dirname, "../../public/post"),
 });
 
 //create a product
