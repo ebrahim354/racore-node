@@ -47,7 +47,7 @@ App.get("*", async (req, res) => {
     console.log('file: ', s3File);
 
     res.set("Content-type", s3File.ContentType);
-    res.send(s3File.Body).end();
+    res.sendFile(s3File).end();
   } catch (error) {
     if (error.code === "NoSuchKey") {
       console.log(`No such key ${filename}`);
