@@ -1,7 +1,7 @@
 const express = require("express");
 const App = express();
 
-const { S3Client } = require('@aws-sdk/client-s3');
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 const s3 = new S3Client();
 //packages
 const morgan = require("morgan");
@@ -37,12 +37,14 @@ App.use("/api/orders", orders);
 
 App.get("*", async (req, res) => {
   let filename = req.path.slice(1);
+  const command = new GetObjectCommand({
+    Bucket: BUCKET,
+    Key: filename
+  })
 
   try {
-    let s3File = await s3.getObject({
-      Bucket: BUCKET,
-      Key: filename,
-    });
+    let s3File = await s3.send(command);
+    console.log('file: ', s3File);
 
     res.set("Content-type", s3File.ContentType);
     res.send(s3File.Body).end();
