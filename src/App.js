@@ -1,7 +1,7 @@
 const express = require("express");
 const App = express();
 const AWS = require("aws-sdk");
-const s3 = new AWS.S3()
+const s3 = new AWS.S3();
 //packages
 const morgan = require("morgan");
 const cors = require("cors");
@@ -28,8 +28,14 @@ App.get("/", (_, res) => {
   return res.send("hello");
 });
 
-App.get('*', async (req,res) => {
-  let filename = req.path.slice(1)
+App.use(getToken);
+App.use("/api/verifyToken", verification);
+App.use("/api/auth/", auth);
+App.use("/api/products", products);
+App.use("/api/orders", orders);
+
+App.get("*", async (req, res) => {
+  let filename = req.path.slice(1);
 
   try {
     let s3File = await s3.getObject({
@@ -37,24 +43,18 @@ App.get('*', async (req,res) => {
       Key: filename,
     });
 
-    res.set('Content-type', s3File.ContentType)
-    res.send(s3File.Body.toString()).end()
+    res.set("Content-type", s3File.ContentType);
+    res.send(s3File.Body).end();
   } catch (error) {
-    if (error.code === 'NoSuchKey') {
-      console.log(`No such key ${filename}`)
-      res.sendStatus(404).end()
+    if (error.code === "NoSuchKey") {
+      console.log(`No such key ${filename}`);
+      res.sendStatus(404).end();
     } else {
-      console.log(error)
-      res.sendStatus(500).end()
+      console.log(error);
+      res.sendStatus(500).end();
     }
   }
 });
-
-App.use(getToken);
-App.use("/api/verifyToken", verification);
-App.use("/api/auth/", auth);
-App.use("/api/products", products);
-App.use("/api/orders", orders);
 
 App.use(errorHandler);
 
