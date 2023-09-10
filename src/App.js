@@ -1,7 +1,8 @@
 const express = require("express");
 const App = express();
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+
+const { S3Client } = require('@aws-sdk/client-s3');
+const s3 = new S3Client();
 //packages
 const morgan = require("morgan");
 const cors = require("cors");

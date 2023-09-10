@@ -12,20 +12,20 @@ const {
   deleteProduct,
 } = require("../db/productService");
 const path = require("path");
-const aws = require('aws-sdk');
-const s3 = new aws.S3();
+const { S3Client } = require('@aws-sdk/client-s3');
+const s3 = new S3Client();
 const MulterS3 = require('multer-s3');
 
-const multerS3 = MulterS3({
+const multerS3 = BUCKET ? MulterS3({
     s3: s3,
-    bucket: BUCKET,
+    bucket: BUCKET ,
     key: function (req, file, cb) {
       console.log('filename', file.originalname);
       const imgPath = Date.now() + req.file.originalname;
       req.body.img = imgPath;
       cb(null, imgPath);
     }
-  })
+  }) : null;
 
 const upload = multer({
   storage: BUCKET ? multerS3 : null,
