@@ -42,6 +42,13 @@ App.get("*", async (req, res) => {
     Key: filename
   }
   try {
+     const headResponse = await s3.send(new HeadObjectCommand(params));
+     console.log('res- ', headResponse);
+        res.set({
+            "Content-Length": headResponse.ContentLength,
+            "Content-Type": headResponse.ContentType,
+            "ETag": headResponse.ETag,
+        });
    const response = await s3.send(new GetObjectCommand(params));
         const stream = response.Body;
         stream.on("data", (chunk) => res.write(chunk));
