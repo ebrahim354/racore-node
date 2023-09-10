@@ -42,29 +42,6 @@ App.get("*", async (req, res) => {
     Key: filename
   }
   try {
-    const headResponse = await s3.send(new HeadObjectCommand(params));
-
-    res.set({
-      "Content-Length": headResponse.ContentLength,
-      "Content-Type": headResponse.ContentType,
-      "ETag": headResponse.ETag,
-    });
-      // Get the object taggings (optional)
-        if (streamTags === true) {
-            const taggingResponse = await s3.send(new GetObjectTaggingCommand(params));
-            taggingResponse.TagSet.forEach((tag) => {
-                res.set("X-TAG-" + tag.Key, tag.Value);
-            });
-        }
-        // Prepare cache headers
-        if (typeof cacheExpiration === "number") {
-            res.setHeader("Cache-Control", "public, max-age=" + cacheExpiration / 1000);
-            res.setHeader("Expires", new Date(Date.now() + cacheExpiration).toUTCString());
-        } else {
-            res.setHeader("Pragma", "no-cache");
-            res.setHeader("Cache-Control", "no-cache");
-            res.setHeader("Expires", 0);
-        }
    const response = await s3.send(new GetObjectCommand(params));
         const stream = response.Body;
         stream.on("data", (chunk) => res.write(chunk));
