@@ -12,7 +12,7 @@ const {
   deleteProduct,
 } = require("../db/productService");
 const path = require("path");
-const { S3Client } = require('@aws-sdk/client-s3');
+const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const s3 = new S3Client();
 const MulterS3 = require('multer-s3');
 
@@ -109,7 +109,15 @@ router.get("/", async (req, res, next) => {
 router.delete("/:id", validateToken, async (req, res, next) => {
   const productId = req.params.id;
   try {
+    const product = await getOneProduct(productId);
     result = await deleteProduct(productId);
+    if(result){
+      const input = {
+        Bucket: BUCKET,
+        Key: product.image,
+      }
+      await s3.send(new DeleteObjectCommand(input));
+    }
     res.status(200).json({
       data: {
         result,
