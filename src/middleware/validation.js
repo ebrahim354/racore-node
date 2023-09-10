@@ -70,7 +70,6 @@ const validateToken = (req, res, next) => {
 		const payload = verifyToken(req.token, true);
 		// console.log(`payload: ${payload.sub}`)
 		req.body.userId = payload.sub;
-		console.log("hello from upload", req);
 	} catch (err) {
 		// console.log(err)
 		next(err);
