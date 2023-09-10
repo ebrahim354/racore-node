@@ -21,7 +21,7 @@ const multerS3 = BUCKET ? MulterS3({
     bucket: BUCKET ,
     key: function (req, file, cb) {
       console.log('filename', file.originalname);
-      const imgPath = Date.now() + req.file.originalname;
+      const imgPath = Date.now() + file.originalname;
       req.body.img = imgPath;
       cb(null, imgPath);
     }
